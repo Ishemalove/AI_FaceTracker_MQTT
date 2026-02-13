@@ -108,51 +108,72 @@ http://localhost:8000/dashboard/index.html
 | Backend | `vision/{TEAM_ID}/movement` | **Subscribes** & relays |
 | ESP8266 | `vision/{TEAM_ID}/movement` | **Subscribes** & actuates |
 
-⚠️ **Critical**: Never use topics from other teams. Always verify `TEAM_ID` matches.
 
-Start Backend WebSocket relay:
+### ⚠️ Critical Notice
 
+> **Never use topics from other teams.**
+> Always verify that your `TEAM_ID` matches your assigned identifier before running any node.
+
+---
+
+### 🔌 1. Start Backend (WebSocket Relay)
+
+```bash
 cd backend
 python backend.py
+```
 
+---
 
-Run Vision Node (PC):
+### 👁️ 2. Run Vision Node (PC)
 
+```bash
 cd vision-node
 python vision_node.py
+```
 
+---
 
-Open Dashboard:
+### 🌐 3. Open Dashboard
 
-Open dashboard/index.html in a browser.
+* Open `dashboard/index.html` in your browser.
+* Ensure the WebSocket URL matches your backend configuration:
 
-Ensure WebSocket URL matches backend:
-
+```javascript
 const ws = new WebSocket("ws://localhost:9002");
+```
 
+---
 
-Flash ESP8266:
+### 📡 4. Flash ESP8266
 
-Update broker IP to your PC’s local IP.
+* Update the MQTT broker IP to your PC’s **local IP address**.
+* Connect the servo signal wire to **GPIO5 (D1)**.
+* Run `main.py` using MicroPython.
 
-Connect servo to GPIO5 (D1).
+---
 
-Run main.py in MicroPython.
+### 💓 Optional: Heartbeat Messages
 
-4. Optional: Heartbeat messages
+You can publish node health status to:
 
-You can publish node status to:
-
+```
 vision/<team_id>/heartbeat
+```
 
+#### Example Payload
 
-Example payload:
-
+```json
 {
   "node": "pc",
   "status": "ONLINE",
   "timestamp": 1730000000
 }
+```
+
+---
+
+This ensures system monitoring and helps detect offline nodes in distributed environments.
 
 ## 💡 Best Practices
 
