@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Tracker Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 50px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 0.9em;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-label {
+            font-size: 0.8em;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .status-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f5f7fa;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+        }
+
+        .status-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-display {
+            font-size: 1.1em;
+            color: #555;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .connection-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        .connection-indicator.connected {
+            background: #4caf50;
+        }
+
+        .connection-indicator.disconnected {
+            background: #f44336;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #999;
+            font-size: 0.85em;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>👁️ Face Tracker</h1>
+            <p class="subtitle">Real-Time Servo Control Dashboard</p>
+        </header>
+
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-label">Detection Status</div>
+                <div class="metric-value" id="status">—</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Confidence Level</div>
+                <div class="metric-value" id="confidence">—</div>
+            </div>
+        </div>
+
+        <div class="status-section">
+            <div class="status-label">
+                <span class="connection-indicator connected" id="indicator"></span>
+                Last Update
+            </div>
+            <div class="status-display" id="timestamp">Waiting for data...</div>
+        </div>
+
+        <div class="footer">
+            WebSocket Connection: ws://localhost:9002
+        </div>
+    </div>
+
+    <script>
+        const ws = new WebSocket("ws://localhost:9002");
+        const indicator = document.getElementById("indicator");
+
+        ws.onopen = function() {
+            indicator.className = "connection-indicator connected";
+        };
+
+        ws.onerror = function() {
+            indicator.className = "connection-indicator disconnected";
+        };
+
+        ws.onmessage = function(event) {
+            indicator.className = "connection-indicator connected";
+            const data = JSON.parse(event.data);
+
+            document.getElementById("status").innerText = data.status || "N/A";
+            document.getElementById("confidence").innerText = (data.confidence ? (Math.round(data.confidence * 100)) + "%" : "N/A");
+            document.getElementById("timestamp").innerText = data.timestamp || new Date().toLocaleTimeString();
+        };
+
+        ws.onclose = function() {
+            indicator.className = "connection-indicator disconnected";
+        };
+    </script>
+</body>
+</html>
