@@ -191,46 +191,75 @@ while abs(target_angle - current_angle) > STEP_SIZE:
 ✅ Verify WebSocket connectivity in browser console  
 ✅ Gradual transition to closed-loop control
 
-📝 Dependencies
+### 📝 Dependencies
 
-Python 3.10+
+Make sure the following tools and libraries are installed:
 
-OpenCV (opencv-python)
+### 💻 Software
 
-Paho-MQTT (paho-mqtt)
+* **Python 3.10+**
+* **Mosquitto MQTT Broker**
+* **MicroPython (ESP8266 firmware)**
 
-Websockets (websockets)
+### 📦 Python Libraries
 
-MicroPython on ESP8266
+```bash
+pip install opencv-python paho-mqtt websockets
+```
 
-Mosquitto MQTT Broker
+* `opencv-python` – Face detection and tracking
+* `paho-mqtt` – MQTT communication
+* `websockets` – Real-time dashboard communication
 
-🎯 Features
+---
 
-Real-time face tracking and servo control
+## 🎯 Features
 
-Full distributed architecture
+* ✅ Real-time face detection and tracking
+* ✅ Servo motor control via ESP8266
+* ✅ Fully distributed architecture
+* ✅ MQTT topic isolation (multi-team friendly)
+* ✅ Live web dashboard updates
+* ✅ Local-only mode (no VPS required)
+* ✅ Supports both open-loop and closed-loop tracking
 
-Topic isolation for multi-team environments
+---
 
-Web dashboard with live updates
+## 🏁 System Workflow
 
-Local-only mode (no VPS required)
+```
+PC Camera → Face Detection → MQTT Publish → ESP8266 → Servo Movement
+                                      ↓
+                              Backend → Web Dashboard
+```
 
-Ready for open-loop (phase 1) or closed-loop (phase 2)
+### 🔹 Phase 1 – Open Loop
 
-🏁 Running Notes
+* Camera is fixed.
+* Face position controls servo directly.
 
-PC camera detects face → publishes MQTT → ESP moves servo → Backend updates dashboard.
+### 🔹 Phase 2 – Closed Loop
 
-Phase 1: Camera fixed.
+* Camera mounted on servo.
+* Continuous feedback enables dynamic tracking.
 
-Phase 2: Camera mounted on servo for closed-loop tracking.
+---
 
-Avoid direct connections between PC ↔ ESP or Dashboard ↔ MQTT.
+## ⚠️ Architecture Rules
 
-🔗 References
+To maintain clean system separation:
 
-Gabriel Baziramwabo ResearchGate
+* ❌ Avoid direct PC ↔ ESP connections
+* ❌ Avoid direct Dashboard ↔ MQTT connections
+* ✅ All communication must flow through defined backend services
 
-BenaxMedia YouTube Channel
+---
+
+## 🔗 References
+
+* **Gabriel Baziramwabo** – ResearchGate
+* **BenaxMedia** – YouTube Channel
+
+---
+
+> Built for experimentation, scalability, and real-time distributed systems le
